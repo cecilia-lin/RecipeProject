@@ -20,6 +20,8 @@ The first dataset, `recipe`, contains 83782 rows, indicating 83782 unique recipe
 | `'n_steps'` | Number of steps in recipe |
 | `'steps'` | Text for recipe steps, in order |
 | `'description'` | User-provided description |
+| `'ingredients'` | Text for recipe ingredients |
+| `'n_ingredients'` | Number of ingredients in recipe |
 
 The second dataset, `interactions`, contains 731927 rows and each row contains a review from the user on a specific recipe. The columns it includes are:
 
@@ -40,17 +42,77 @@ To make our analysis of the dataset more efficient and convenient, we conducted 
 
 1. Left merge the recipes and interactions datasets on id and recipe_id.
     - This step helps match the unique recipes with their rating and review. 
+
 1. Check data types of all the columns.
-    -This step helps us evaluate what data cleaning steps are appropriate for the dataset and if we need to conduct data type conversion.
+    - This step helps us evaluate what data cleaning steps are appropriate for the dataset and if we need to conduct data type conversion.
     -   | Column | Description |
         | :-------- | :------- |
-        | `'name'` | Recipe name |
-        | `'id'` | Recipe ID |
-        | `'minutes'` | Minutes to prepare recipe |
-        | `'contributor_id'` | User ID who submitted this recipe |
-        | `'submitted'` | Date recipe was submitted |
-        | `'tags'` | Food.com tags for recipe |
-        | `'nutrition'` | |
-        | `'n_steps'` | Number of steps in recipe |
-        | `'steps'` | Text for recipe steps, in order |
-        | `'description'` | User-provided description |
+        | `'name'` | object |
+        | `'id'` | int64 |
+        | `'minutes'` | int64 |
+        | `'contributor_id'` | int64 |
+        | `'submitted'` | object |
+        | `'tags'` | object |
+        | `'nutrition'` | object |
+        | `'n_steps'` | int64 |
+        | `'steps'` | object |
+        | `'description'` | object |
+        | `'ingredients'` | object |
+        | `'n_ingredients'` | int64 |
+        | `'user_id'` | float64 |
+        | `'recipe_id'` | float64 |
+        | `'date'` | object |
+        | `'rating'` | float64 |
+        | `'review'` | object |
+
+1. Fill all ratings of 0 with np.nan. 
+    - Rating is generally on a scale from 1 to 5, 1 meaning the lowest rating while 5 means the highest rating. With that being said, a rating of 0 indicates missing values in rating. Thus, to avoid bias in the ratings, we filled the value 0 with np.nan.
+
+1. Add column average_rating containing average rating per recipe.
+    - Since a recipe can have numerous ratings from different users, we take an average of all the ratings to get a more comprehensive understanding of the rating of a given recipe.
+
+1. Split values in the nutrition column to individual columns of floats.
+    - Even though the values in the nutrition column look like a list, they are actually objects, which act like strings.  Given by the description of the columns of the recipe dataset, we know what each individual values inside the brackets mean. To split up the values, we applied a lambda function then converted the columns to floats. It will allow us to conduct numerical calculations on the columns.
+
+1. Convert submitted and date to datetime.
+    - These two columns are both stored as objects initially, so we converted them into datetime to allow us conduct analysis on trends over time if needed.
+1. Add prop_sugar to the dataframe 
+    - prop_sugar is the proportion of sugar of the total calories in a recipe. To calculate this, we use the values in the sugar (PDV) column to divide by 100% to get it in the decimal form. Then, we multiply by 25 to convert the values to grams of sugar since 25 grams of sugar is the 100% daily value (PDV). We got this value of 25 grams from experimenting on food.com with different amounts of sugar in a recipe. The experimentation allows us to understand the nutrition formula used on the website for recipes. Lastly, we multiply by 4 since there are 4 calories in 1 gram of sugar. After all these conversions, we end up with the number of calories of sugar, so we can divide by the total amount of calories in the recipe to get the proportion of sugar of the total calories. This data cleaning step is critical to allow us to make parallel comparisons on the amount of sugar in a recipe without concerns of extremely large values since all the values will be between 0 and 1.
+
+#### Result
+ | Column | Description |
+| :-------- | :------- |
+| `'name'` | object |
+| `'id'` | int64 |
+| `'minutes'` | int64 |
+| `'contributor_id'` | int64 |
+| `'submitted'` | datetime64[ns] |
+| `'tags'` | object |
+| `'nutrition'` | object |
+| `'n_steps'` | int64 |
+| `'steps'` | object |
+| `'description'` | object |
+| `'ingredients'` | object |
+| `'n_ingredients'` | int64 |
+| `'user_id'` | float64 |
+| `'recipe_id'` | float64 |
+| `'date'` | datetime64[ns] |
+| `'rating'` | float64 |
+| `'review'` | object |
+| `'average rating'` | object |
+| `'calories (#)'` | float64 |
+| `'total fat (PDV)'` | float64 |
+| `sugar (PDV)'` | float64 |
+| `'sodium (PDV)'` | float64 |
+| `'protein (PDV)'` | float64 |
+| `'saturated fat (PDV)'` | float64 |
+| `'carbohydrates (PDV)'` | float64 |
+| `'prop_sugar'` | float64 |
+
+### Univariate Analysis
+For this analysis, we examined the distribution of the proportion of sugar in a recipe. As the plot below shows, the distribution skewed to the right, indicating that most of the recipes on food.com have a low proportion of sugar. There is also a decreasing trend, indicating that as the proportion of sugar in recipes gets higher, there are less of those recipes on food.com. 
+
+### Bivariate Analysis
+For this analysis, we examined the distribution of the rating of the recipe conditioned between the sugary recipes and non-sugary recipes. The graph below shows that recipes with rating of 3, 4 and 5 are more likely to be non-sugary recipes while the recipes with rating of 1 and 2 are more likely to be sugary recipes. We would dive deeper to see if the difference in these proportions are significant in later sections.
+
+
