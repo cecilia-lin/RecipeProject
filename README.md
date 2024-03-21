@@ -212,7 +212,7 @@ The **observed statistic** of **0.0063** is indicated by the red vertical line o
 **Significance level:** 0.05
 
 <iframe
-  src="assets/prescale_distr_minutes.html"
+  src="assets/empirical_diff_prescale.html"
   width="800"
   height="600"
   frameborder="0"
