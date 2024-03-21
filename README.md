@@ -76,6 +76,10 @@ To make our analysis of the dataset more efficient and convenient, we conducted 
 
 1. Convert submitted and date to datetime.
     - These two columns are both stored as objects initially, so we converted them into datetime to allow us conduct analysis on trends over time if needed.
+
+1. Add `'is_dessert'` to the dataframe 
+    - `'is_dessert'` is a boolean column checking  if the tags of recipes contain 'dessert' since desserts typically have a higher amount of sugar. This step separates the recipes into two groups, ones that are dessert and ones that are not. This provides us another way to compare ratings of recipes with more sugar and ones with less sugar.
+
 1. Add prop_sugar to the dataframe 
     - prop_sugar is the proportion of sugar of the total calories in a recipe. To calculate this, we use the values in the sugar (PDV) column to divide by 100% to get it in the decimal form. Then, we multiply by 25 to convert the values to grams of sugar since 25 grams of sugar is the 100% daily value (PDV). We got this value of 25 grams from experimenting on food.com with different amounts of sugar in a recipe. The experimentation allows us to understand the nutrition formula used on the website for recipes. Lastly, we multiply by 4 since there are 4 calories in 1 gram of sugar. After all these conversions, we end up with the number of calories of sugar, so we can divide by the total amount of calories in the recipe to get the proportion of sugar of the total calories. This data cleaning step is critical to allow us to make parallel comparisons on the amount of sugar in a recipe without concerns of extremely large values since all the values will be between 0 and 1.
 
@@ -108,7 +112,10 @@ To make our analysis of the dataset more efficient and convenient, we conducted 
 | `'protein (PDV)'` | float64 |
 | `'saturated fat (PDV)'` | float64 |
 | `'carbohydrates (PDV)'` | float64 |
+| `'is_dessert'` | bool |
 | `'prop_sugar'` | float64 |
+
+
 
 ### Univariate Analysis
 For this analysis, we examined the distribution of the proportion of sugar in a recipe. As the plot below shows, the distribution skewed to the right, indicating that most of the recipes on food.com have a low proportion of sugar. There is also a decreasing trend, indicating that as the proportion of sugar in recipes gets higher, there are less of those recipes on food.com. 
@@ -140,3 +147,50 @@ For this section, we investigated the relationship between the cooking time in m
   height="600"
   frameborder="0"
 ></iframe>
+
+## Assessment of Missingness
+
+Three columns, `'date'`, `'rating'`, and `'review'`,  in the merged dataset have a significant amount of missing values, so we decided to assess the missingness on the dataframe.
+
+### NMAR Analysis
+We believe that the missingness of the `'review'` column is NMAR, because if people feel indifferent about the recipe, they are less likely to leave a review for it since they would feel like they have nothing significant to talk about. People usually will leave a review only if they have stronger emotions towards the recipe. Their emotions would motivate them to go onto the page, click multiple buttons to leave, and take some time out of their day to write a review. For example, people who enjoyed the recipe would be willing to do all the work to leave a good review for the recipe.
+
+### Missingness Dependency
+We moved on to examine the missingness of `'rating'` in the merged DataFrame by testing the dependency of its missingness. We are investigating whether the missiness in the `'rating'` column depends on the column `'prop_sugar'`, which is the proportion of sugar out of the total calories, or the column `'n_steps'`, which is the number of steps of the recipe.
+
+> Proportion of Sugar and Rating
+**Null hypothesis:** The missingness of ratings does not depend on the proportion of sugar in the recipe.
+
+**Alternate hypothesis:** The missingness of ratings does depend on the proportion of sugar in the recipe.
+
+**Test statistic:** The absolute difference of mean in the proportion of sugar of the distribution of the group without missing ratings and the distribution of the group without missing ratings. 
+
+**Significance level:** 0.05
+
+<iframe
+  src="assets/distr_rating_sugar.html
+  width="800"
+  height="600"
+  frameborder="0"
+></iframe>
+
+We ran a permutation test by shuffling the missingness of rating for 1000 times to collect 1000 simulating mean differences in the two distributions as described in the test statistic.
+
+
+<iframe
+  src="assets/empirical_diff_sugar.html
+  width="800"
+  height="600"
+  frameborder="0"
+></iframe>
+
+The **observed statistic** of **0.0063** is indicated by the red vertical line on the graph. Since the **p_value** that we found **(0.0)** is < 0.05 which is the significance level that we set, we **reject the null hypothesis**. The missingness of `'rating'` does depend on the `'prop_sugar'`, which is proportion of sugar in the recipe.
+
+> Minutes and Rating
+**Null hypothesis:** The missingness of ratings does not depend on the cooking time of the recipe in minutes.
+
+**Alternate hypothesis:** The missingness of ratings does depend on the cooking time of the recipe in minutes.
+
+**Test statistic:** The absolute difference of mean in cooking time of the recipe in minutes of the distribution of the group without missing ratings and the distribution of the group without missing ratings. 
+
+**Significance level:** 0.05
