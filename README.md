@@ -159,6 +159,7 @@ We believe that the missingness of the `'review'` column is NMAR, because if peo
 We moved on to examine the missingness of `'rating'` in the merged DataFrame by testing the dependency of its missingness. We are investigating whether the missiness in the `'rating'` column depends on the column `'prop_sugar'`, which is the proportion of sugar out of the total calories, or the column `'n_steps'`, which is the number of steps of the recipe.
 
 > Proportion of Sugar and Rating
+
 **Null hypothesis:** The missingness of ratings does not depend on the proportion of sugar in the recipe.
 
 **Alternate hypothesis:** The missingness of ratings does depend on the proportion of sugar in the recipe.
@@ -168,7 +169,7 @@ We moved on to examine the missingness of `'rating'` in the merged DataFrame by 
 **Significance level:** 0.05
 
 <iframe
-  src="assets/distr_rating_sugar.html
+  src="assets/distr_rating_sugar.html"
   width="800"
   height="600"
   frameborder="0"
@@ -178,7 +179,7 @@ We ran a permutation test by shuffling the missingness of rating for 1000 times 
 
 
 <iframe
-  src="assets/empirical_diff_sugar.html
+  src="assets/empirical_diff_sugar.html"
   width="800"
   height="600"
   frameborder="0"
@@ -187,6 +188,7 @@ We ran a permutation test by shuffling the missingness of rating for 1000 times 
 The **observed statistic** of **0.0063** is indicated by the red vertical line on the graph. Since the **p_value** that we found **(0.0)** is < 0.05 which is the significance level that we set, we **reject the null hypothesis**. The missingness of `'rating'` does depend on the `'prop_sugar'`, which is proportion of sugar in the recipe.
 
 > Minutes and Rating
+
 **Null hypothesis:** The missingness of ratings does not depend on the cooking time of the recipe in minutes.
 
 **Alternate hypothesis:** The missingness of ratings does depend on the cooking time of the recipe in minutes.
