@@ -191,7 +191,6 @@ We moved on to examine the missingness of `'rating'` in the merged DataFrame by 
 
 We ran a permutation test by shuffling the missingness of rating for 1000 times to collect 1000 simulating mean differences in the two distributions as described in the test statistic.
 
-
 <iframe
   src="assets/empirical_diff_sugar.html"
   width="800"
