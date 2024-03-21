@@ -212,11 +212,21 @@ The **observed statistic** of **0.0063** is indicated by the red vertical line o
 **Significance level:** 0.05
 
 <iframe
+  src="assets/prescale_distr_minutes.html"
+  width="800"
+  height="600"
+  frameborder="0"
+></iframe>
+
+Due to the outliers in cooking time, it is difficult to identify the shapes of the two distributions, so we update the scale to take a closer look.
+
+<iframe
   src="assets/distr_rating_minutes.html"
   width="800"
   height="600"
   frameborder="0"
 ></iframe>
+
 
 We ran another permutation test by shuffling the missingness of rating for 1000 times to collect 1000 simulating mean differences in the two distributions as described in the test statistic.
 
