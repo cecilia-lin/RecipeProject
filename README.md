@@ -138,8 +138,22 @@ For this analysis, we examined the distribution of the rating of the recipe cond
 ></iframe>
 
 ### Interesting Aggregates
-For this section, we investigated the relationship between the cooking time in minutes and proportion of sugar of the recipes.  After grouping the data, we created a data visualization, shown below, to understand it better. Interestingly, the graph shows that as the cooking time increases the proportion of sugar in a recipe fluctuates more and more. Also, the shapes of the line for mean and median looks very similar, especially for the recipes with shorter cooking time. 
 
+For this section, we investigated the relationship between the cooking time in minutes and proportion of sugar of the recipes. First, we created a small dataframe, `'filter_df'` to store the cooking time in minutes without outliers. We identified the outliers using the IQR method. After grouping the cooking time and proportion of sugar in a pivot table shown below, we created a data visualization to understand it better. Interestingly, the graph shows that as the cooking time increases the proportion of sugar in a recipe fluctuates more and more. Also, the shapes of the line for mean and median looks very similar, especially for the recipes with shorter cooking time. 
+
+|   minutes |   ('mean', 'prop_sugar') |   ('median', 'prop_sugar') |   ('min', 'prop_sugar') |   ('max', 'prop_sugar') |
+|----------:|-------------------------:|---------------------------:|------------------------:|------------------------:|
+|         0 |                0.0137804 |                  0.0137804 |               0.0137804 |               0.0137804 |
+|         1 |                0.29681   |                  0.212177  |               0         |               1.02985   |
+|         2 |                0.316258  |                  0.25641   |               0         |               1.06358   |
+|         3 |                0.279901  |                  0.19305   |               0         |               1.03192   |
+|         4 |                0.276908  |                  0.235205  |               0         |               1.04322   |
+|       ... |                     ...  |                       ...  |               ...       |               ...       |
+|       115 |                0.132994  |                  0.0705617 |               0         |               0.955342  |
+|       116 |                0.2303    |                  0.2303    |               0.133949  |               0.326652  |
+|       117 |                0.0412412 |                  0.0412412 |               0.0412412 |               0.0412412 |
+|       118 |                0.378571  |                  0.378571  |               0.378571  |               0.378571  |
+|       120 |                0.145882  |                  0.0628323 |               0         |               1.01558   |
 
 <iframe
   src="assets/interesting_agg.html"
@@ -196,3 +210,60 @@ The **observed statistic** of **0.0063** is indicated by the red vertical line o
 **Test statistic:** The absolute difference of mean in cooking time of the recipe in minutes of the distribution of the group without missing ratings and the distribution of the group without missing ratings. 
 
 **Significance level:** 0.05
+
+<iframe
+  src="assets/distr_rating_minutes.html"
+  width="800"
+  height="600"
+  frameborder="0"
+></iframe>
+
+We ran another permutation test by shuffling the missingness of rating for 1000 times to collect 1000 simulating mean differences in the two distributions as described in the test statistic.
+
+<iframe
+  src="assets/empirical_diff_minutes.html"
+  width="800"
+  height="600"
+  frameborder="0"
+></iframe>
+
+The **observed statistic** of **51.4524** is indicated by the red vertical line on the graph. Since the **p-value** that we found **(0.118)** is > 0.05 which is the significance level that we set, we **fail to reject the null hypothesis**. The missingness of rating does not depend on the cooking time in minutes of the recipe.
+
+## Hypothesis Testing
+
+As mentioned in the introduction, we are curious about whether people rate sugary recipes and non-sugary recipes on the same scale. By sugary recipes, we are talking about recipes with a proportion of sugar higher than the average proportion of sugar.  Proportion of sugar is referring to the values in `'prop_sugar'`, which are the proportion of sugar in calories out of the total calories of the recipe. 
+
+To investigate the question, we ran a **permutation test** with the following hypotheses, test statistic, and significance level.
+
+**Null Hypothesis:** People rate all the recipes on the same scale.
+
+**Alternative Hypothesis:** People rate sugary recipes lower than non-sugary recipes.
+
+**Test statistics:** The difference in mean between rating of sugary recipes and non-sugary recipes.
+
+**Significance level:** 0.05
+
+The reason we chose to run a permutations test is because we do not have any information of any population, and we want to check if the two distributions look like they come from the same population. We proposed that **people rate the sugary recipes lower** because people might be concerned with the negative health risks relating to the recipe, and we would like to know all the opinions from the users, so we used rating instead of average rating of the recipes. For the test statistic, we chose the difference in mean of the ratings of two groups of recipes instead of absolute difference in mean. This is because we have a directional hypothesis, which is that people rate sugary recipes lower than other recipes. By looking at the difference in mean between the two groups, we can see what type of recipes typically have a higher rating, which answers our question.
+
+To run the test, we first split the data points into two groups, sugary, which are recipes with proportion of sugar higher than the mean proportion of sugar, and the rest of the data points are in the non-sugary group. The **observed statistic** is **-0.0097**.
+
+Then we shuffled the ratings for 1000 times to collect 1000 simulating mean differences in the two distributions as described in the test statistic. We got a **p-value** of **0.002**.
+
+<iframe
+  src="assets/empirical_diff_rating.html"
+  width="800"
+  height="600"
+  frameborder="0"
+></iframe>
+
+
+#### Conclusion of Permutation Test
+Since the **p-value** that we found **(0.002)** is less than the significance level of  0.05, we **reject the null hypothesis**. People do not rate all the recipes on the same scale, and they tend to rate sugary recipes lower. One plausible explanation for this founding could be that people are concerned with health risks relating to sugary recipes, such as diabetes.
+
+## Framing a Prediction Problem
+
+## Baseline Model
+
+## Final Model
+
+## Fairness Analysis
