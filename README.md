@@ -97,6 +97,7 @@ To make our analysis of the dataset more efficient and convenient, we conducted 
 
 #### Result
 Here are all the columns of the cleaned df.
+
 | Column                  | Description    |
 | :---------------------- | :------------- |
 | `'name'`                | object         |
@@ -127,7 +128,10 @@ Here are all the columns of the cleaned df.
 | `'is_dessert'`          | bool           |
 | `'prop_sugar'`          | float64        |
 
+
 Since there is a lot of columns for the merged dataframe, we selected the columns that are most relevant to our questions for display. Scroll right to view more columns.
+
+
 
 | name                                 |     id |   minutes | submitted           | tags                                                                                                                                                                                                                        |   rating |   average rating |   calories (#) |   sugar (PDV) | is_dessert   |   prop_sugar |
 |:-------------------------------------|-------:|----------:|:--------------------|:----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------:|-----------------:|---------------:|--------------:|:-------------|-------------:|
