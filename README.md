@@ -68,7 +68,7 @@ To make our analysis of the dataset more efficient and convenient, we conducted 
 1. Fill all ratings of 0 with np.nan. 
     - Rating is generally on a scale from 1 to 5, 1 meaning the lowest rating while 5 means the highest rating. With that being said, a rating of 0 indicates missing values in rating. Thus, to avoid bias in the ratings, we filled the value 0 with np.nan.
 
-1. Add column average_rating containing average rating per recipe.
+1. Add column `'average_rating'` containing average rating per recipe.
     - Since a recipe can have numerous ratings from different users, we take an average of all the ratings to get a more comprehensive understanding of the rating of a given recipe.
 
 1. Split values in the nutrition column to individual columns of floats.
@@ -80,7 +80,7 @@ To make our analysis of the dataset more efficient and convenient, we conducted 
 1. Add `'is_dessert'` to the dataframe 
     - `'is_dessert'` is a boolean column checking  if the tags of recipes contain 'dessert' since desserts typically have a higher amount of sugar. This step separates the recipes into two groups, ones that are dessert and ones that are not. This provides us another way to compare ratings of recipes with more sugar and ones with less sugar.
 
-1. Add prop_sugar to the dataframe 
+1. Add `'prop_sugar'` to the dataframe 
     - prop_sugar is the proportion of sugar of the total calories in a recipe. To calculate this, we use the values in the sugar (PDV) column to divide by 100% to get it in the decimal form. Then, we multiply by 25 to convert the values to grams of sugar since 25 grams of sugar is the 100% daily value (PDV). We got this value of 25 grams from experimenting on food.com with different amounts of sugar in a recipe. The experimentation allows us to understand the nutrition formula used on the website for recipes. Lastly, we multiply by 4 since there are 4 calories in 1 gram of sugar. After all these conversions, we end up with the number of calories of sugar, so we can divide by the total amount of calories in the recipe to get the proportion of sugar of the total calories. This data cleaning step is critical to allow us to make parallel comparisons on the amount of sugar in a recipe without concerns of extremely large values since all the values will be between 0 and 1.
 
 #### Result
@@ -139,7 +139,7 @@ For this analysis, we examined the distribution of the rating of the recipe cond
 
 ### Interesting Aggregates
 
-For this section, we investigated the relationship between the cooking time in minutes and proportion of sugar of the recipes. First, we created a small dataframe, `'filter_df'` to store the cooking time in minutes without outliers. We identified the outliers using the IQR method. After grouping the cooking time and proportion of sugar in a pivot table shown below, we created a data visualization to understand it better. Interestingly, the graph shows that as the cooking time increases the proportion of sugar in a recipe fluctuates more and more. Also, the shapes of the line for mean and median looks very similar, especially for the recipes with shorter cooking time. 
+For this section, we investigated the relationship between the cooking time in minutes and proportion of sugar of the recipes. First, we created a small dataframe, `'filter_df'` to store the cooking time in minutes without outliers. We identified the outliers using the IQR method. After grouping the cooking time and proportion of sugar in a pivot table shown below, we created a data visualization to understand it better. 
 
 |   minutes |   ('mean', 'prop_sugar') |   ('median', 'prop_sugar') |   ('min', 'prop_sugar') |   ('max', 'prop_sugar') |
 |----------:|-------------------------:|---------------------------:|------------------------:|------------------------:|
@@ -154,6 +154,8 @@ For this section, we investigated the relationship between the cooking time in m
 |       117 |                0.0412412 |                  0.0412412 |               0.0412412 |               0.0412412 |
 |       118 |                0.378571  |                  0.378571  |               0.378571  |               0.378571  |
 |       120 |                0.145882  |                  0.0628323 |               0         |               1.01558   |
+
+Interestingly, the graph shows that as the cooking time increases the proportion of sugar in a recipe fluctuates more and more. According to the plot, tecipes take a long time could be either sugary or savory dishes. Also, the shapes of the line for mean and median looks very similar, especially for the recipes with shorter cooking time. 
 
 <iframe
   src="assets/interesting_agg.html"
@@ -236,7 +238,7 @@ We ran another permutation test by shuffling the missingness of rating for 1000 
   frameborder="0"
 ></iframe>
 
-The **observed statistic** of **51.4524** is indicated by the red vertical line on the graph. Since the **p-value** that we found **(0.118)** is > 0.05 which is the significance level that we set, we **fail to reject the null hypothesis**. The missingness of rating does not depend on the cooking time in minutes of the recipe.
+The **observed statistic** of **51.4524** is indicated by the red vertical line on the graph. Since the **p-value** that we found **(0.123)** is > 0.05 which is the significance level that we set, we **fail to reject the null hypothesis**. The missingness of rating does not depend on the cooking time in minutes of the recipe.
 
 ## Hypothesis Testing
 
@@ -256,7 +258,7 @@ The reason we chose to run a permutations test is because we do not have any inf
 
 To run the test, we first split the data points into two groups, sugary, which are recipes with proportion of sugar higher than the mean proportion of sugar, and the rest of the data points are in the non-sugary group. The **observed statistic** is **-0.0097**.
 
-Then we shuffled the ratings for 1000 times to collect 1000 simulating mean differences in the two distributions as described in the test statistic. We got a **p-value** of **0.002**.
+Then we shuffled the ratings for 1000 times to collect 1000 simulating mean differences in the two distributions as described in the test statistic. We got a **p-value** of **0.001**.
 
 <iframe
   src="assets/empirical_diff_rating.html"
@@ -270,9 +272,60 @@ Then we shuffled the ratings for 1000 times to collect 1000 simulating mean diff
 Since the **p-value** that we found **(0.002)** is less than the significance level of  0.05, we **reject the null hypothesis**. People do not rate all the recipes on the same scale, and they tend to rate sugary recipes lower. One plausible explanation for this founding could be that people are concerned with health risks relating to sugary recipes, such as diabetes.
 
 ## Framing a Prediction Problem
+We plan to **predict average rating of a recipe** which would be a **classification problem** since we can treat rating as a ordinal categorical variable if we round the average rating so that we only have [1, 2, 3, 4, 5] as possible values. To address our prediction problem, we will build a multi-class classifier since our average ratings have 5 possible values that the model will predict from. 
+
+We chose the average rating of a recipe as a response variable because it is a good representation of the overall rating of a recipe. We have also previously found significant correlation between rating and sugary recipes, which are recipes with proportion of sugar higher than the average proportion of suagr, so we may be able to predict the rating through the proportion of sugar. 
+
+To evaluate our model, we will use the f1 score instead of accurary, because the distribution for the ratings are heavily skewed left with most ratings concentrated in the higher ratings (4-5). This means that there are more recipes with higher average ratings. If we use accuracy, the model's performance may be misleading due to the imbalanced classes.
+
+The information we have prior making our prediction are all the columns in the `rating` dataset, which are listed in the introduction section. All those columns are features relating to the recipes themselves, thus we would have access to it even though no one has made a rating and review on them.
 
 ## Baseline Model
+For our baseline model, we are utilizing a random forest classifier with 
+- features: prop_sugar, is_dessert, 
+- prop_sugar is quantitative, numerical
+-is_dessert is nominal
+- transformation: one hot encoded the is_dessert boolean values to make 
+f1 score: 0.89665
+
+current model is decent for ratings with more data
+- most recipes have 4 or 5 ratings
+- but not as good for ratings with less data
+- accurate for 4 / 5 rating but not for those rated lower
+
+
 
 ## Final Model
 
+is_dessert
+- we made a bar graphs and see that higher rating such as 4 and 5 recipes has less dessert recipes
+
+- standardscaler for minute
+recipes took longer have medicore ratings
+ rating of 2 or 3
+ have difference in the minutes
+- standardize to guarantee that they are in a comparable range
+
+
+-robust scaler for calories
+  -doesnt take account for outliers, make sure it does not 
+  -recipes with higher rating has less caloreies
+
+- submitted (When the recipe is being submitted) 
+  - convert to years, most submited in 2012 
+  - newer recipes has lower ratings
+  notice trend between years and rating
+  -robust to others
+
+prop_sugar
+- when we look at the hypothesis testing prior tells us that people tend to rate recipes with high prop_sugar tend lower
+
+
+we use randomforestclassier and gridsearch to tune the hyperparameters
+
+how is it improvement
+- improve for each of the categories (Compare the two models)
+
 ## Fairness Analysis
+test statistic: low calories: ones below the median high calories: ones above medians
+- the difference of precision between the two groups
