@@ -281,21 +281,16 @@ To evaluate our model, we will use the f1 score instead of accurary, because the
 The information we have prior making our prediction are all the columns in the `rating` dataset, which are listed in the introduction section. All those columns are features relating to the recipes themselves, thus we would have access to it even though no one has made a rating and review on them.
 
 ## Baseline Model
-For our baseline model, we are utilizing a random forest classifier with 
-- features: prop_sugar, is_dessert, 
-- prop_sugar is quantitative, numerical
--is_dessert is nominal
-- transformation: one hot encoded the is_dessert boolean values to make 
-f1 score: 0.89665
+For our baseline model, we are utilizing a random forest classifier and split the data points into training and test sets. The features we are using for this model is `'prop_sugar'`, a column containing quantitative numerical values, and `'is_dessert'`, a column containing nominal values since they are boolean values.
 
-current model is decent for ratings with more data
-- most recipes have 4 or 5 ratings
-- but not as good for ratings with less data
-- accurate for 4 / 5 rating but not for those rated lower
+We one hot encoded the boolean values in `'is_dessert'` the corresponding 0 and 1 values and dropped one of the encoded columns. This step allows us to train the model appropriately.
 
+The metric, **F1 score**, of this model is **0.87**. The F1 score for each rating categoires are 0.20, 0.47, 0.50, 0.74, and 0.92 for rating of 1s, 2s, 3s, 4s, and 5s correspondingly. The metrics let us know that the model predicts better for rating of 4s and 5s and not as accurate for the lower ratings. The reason for this could be that there are recipes with rating 4s and 5s in the dataset compared to other ratings. With the more data points, the model predicted better for higher ratings.
 
 
 ## Final Model
+
+For the final model, we used `'is_dessert'`,  `'minutes'`, `'calories (#)'`, `'submitted'`, and `'prop_sugar'` as the features. 
 
 is_dessert
 - we made a bar graphs and see that higher rating such as 4 and 5 recipes has less dessert recipes
