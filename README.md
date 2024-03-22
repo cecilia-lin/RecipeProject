@@ -129,7 +129,7 @@ Here are all the columns of the cleaned df.
 | `'prop_sugar'`          | float64        |
 
 
-Since there is a lot of columns for the merged dataframe, we selected the columns that are most relevant to our questions for display. Scroll right to view more columns.
+Our cleaned dataframe ended up with 234429 rows and 27 columns. Here are the first 5 rows of our cleaned dataframe for illustration. Since there is a lot of columns for the merged dataframe, we selected the columns that are most relevant to our questions for display. Scroll right to view more columns.
 
 | name                                 |     id |   minutes | submitted           |   rating |   average rating |   calories (#) |   sugar (PDV) | is_dessert   |   prop_sugar |
 |:-------------------------------------|-------:|----------:|:--------------------|---------:|-----------------:|---------------:|--------------:|:-------------|-------------:|
